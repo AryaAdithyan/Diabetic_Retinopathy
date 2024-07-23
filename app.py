@@ -122,7 +122,7 @@ def load_model(model_path, device):
     try:
         model.load_state_dict(torch.load(model_path, map_location=device))
     except Exception as e:
-        print(f"Error loading model from {model_path}: {e}")
+        st.error(f"Error loading model from {model_path}: {e}")
     model = model.to(device)
     return model
 
@@ -142,16 +142,58 @@ def predict_with_ensemble(image_path, models, device):
     final_pred_hard = final_pred_hard.flatten()[0]
     return final_pred_hard
 
+# Recommendations and Notes
+def recommendations(pred):
+    if pred == 0:
+        return "Your retina appears healthy. Continue regular eye check-ups."
+    elif pred == 1:
+        return "You have non-referable diabetic retinopathy. Consult with an ophthalmologist for further evaluation and management."
+    elif pred == 2:
+        return "You have referable diabetic retinopathy. It is important to seek immediate medical attention from a specialist."
+    return "Unable to determine recommendation."
+
+def doctor_notes(pred):
+    if pred == 0:
+        return "The patient shows no signs of diabetic retinopathy. Regular monitoring is advised."
+    elif pred == 1:
+        return "The patient has non-referable diabetic retinopathy. Consider follow-up and possible interventions."
+    elif pred == 2:
+        return "The patient has referable diabetic retinopathy. Immediate consultation with a specialist is recommended."
+    return "No data available."
+
 def main():
     st.title("Diabetic Retinopathy Detection")
+    st.markdown(
+        """
+        <style>
+        .main {background-color: #f0f2f6; padding: 20px;}
+        .card {background-color: #ffffff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);}
+        .recommendation {color: #1e90ff;}
+        .notes {color: #ff6347;}
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
     uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
+    
     if uploaded_file is not None:
-        image = np.array(Image.open(uploaded_file))
-        st.image(image, channels="RGB")
-        st.write("Processing image...")
-        pred_hard = predict_with_ensemble(uploaded_file, models, device)
-        class_labels = {0: "Healthy", 1: "Non-Referable DR", 2: "Referable DR"}
-        st.write(f"Predicted Class: {class_labels[pred_hard]}")
+        image = Image.open(uploaded_file).convert('RGB')
+        st.image(image, caption='Uploaded Image.', use_column_width=True)
+
+        if st.button("Predict"):
+            with st.spinner("Processing..."):
+                image_path = uploaded_file.name
+                image.save(image_path)
+                pred = predict_with_ensemble(image_path, models, device)
+                st.write("**Prediction:**", "Healthy" if pred == 0 else "Non-Referable DR" if pred == 1 else "Referable DR")
+                
+                st.markdown(f"### Recommendations")
+                st.markdown(f"<div class='recommendation'>{recommendations(pred)}</div>", unsafe_allow_html=True)
+
+                st.markdown(f"### Notes for Doctor")
+                st.markdown(f"<div class='notes'>{doctor_notes(pred)}</div>", unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()
+

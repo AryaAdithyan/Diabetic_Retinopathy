@@ -1,8 +1,10 @@
 streamlit
+opencv-python-headless
+numpy
 torch
 torchvision
 timm
-numpy
-opencv-python
-pillow
+Pillow
 scipy
+gdown
+

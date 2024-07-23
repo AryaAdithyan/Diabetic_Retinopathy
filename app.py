@@ -102,11 +102,11 @@ def download_model(url, output_path):
 
 # URLs for Google Drive links
 model_urls = {
-    'model_no_preprocessing': 'https://drive.google.com/file/d/1w_x2nqd-UNZJd17MSha_CDvyJbZNsknv/view?usp=drive_link',
-    'model_rgb_clahe': 'https://drive.google.com/file/d/1j231qvGMS1E2gWxRDcKql7ap-qKU7jBn/view?usp=drive_link',
-    'model_min_pooling': 'https://drive.google.com/file/d/1p4yKgrgqmP3qaacgjHeH0Ds-1eAgVqL1/view?usp=drive_link',
-    'model_lab_clahe': 'https://drive.google.com/file/d/1lSp_mf9YSMez7O7nelZEaSNhXOqXRDi6/view?usp=drive_link',
-    'model_maxgreengsc_clahe': 'https://drive.google.com/file/d/1B75d18Mn6t99iQ-nrfIaiSz2dYi3KrW3/view?usp=drive_link'
+    'model_no_preprocessing': 'https://drive.google.com/uc?export=download&id=1w_x2nqd-UNZJd17MSha_CDvyJbZNsknv',
+    'model_rgb_clahe': 'https://drive.google.com/uc?export=download&id=1j231qvGMS1E2gWxRDcKql7ap-qKU7jBn',
+    'model_min_pooling': 'https://drive.google.com/uc?export=download&id=1p4yKgrgqmP3qaacgjHeH0Ds-1eAgVqL1',
+    'model_lab_clahe': 'https://drive.google.com/uc?export=download&id=1lSp_mf9YSMez7O7nelZEaSNhXOqXRDi6',
+    'model_maxgreengsc_clahe': 'https://drive.google.com/uc?export=download&id=1B75d18Mn6t99iQ-nrfIaiSz2dYi3KrW3'
 }
 
 # Download model files

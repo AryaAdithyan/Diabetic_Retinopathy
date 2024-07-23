@@ -7,6 +7,7 @@ from torchvision import transforms
 import timm
 from PIL import Image
 from scipy.stats import mode
+import gdown
 
 # Define the function to crop black borders
 def crop_black_borders(image):
@@ -90,12 +91,6 @@ def predict_with_model(model, image, device):
         score = torch.softmax(output, dim=1).cpu().numpy()
     return pred.cpu().numpy()[0], score
 
-import streamlit as st
-import gdown
-import torch
-import timm
-from torch import nn
-
 # Function to download models from Google Drive
 def download_model(url, output_path):
     gdown.download(url, output_path, quiet=False)
@@ -114,7 +109,7 @@ model_paths = [f'model_{key}.pth' for key in model_urls.keys()]
 for url, path in zip(model_urls.values(), model_paths):
     download_model(url, path)
 
-# Load the models (same as in your current code)
+# Load the models
 def load_model(model_path, device):
     model = timm.create_model('tf_efficientnet_b4_ns', pretrained=False)
     num_ftrs = model.classifier.in_features
@@ -124,14 +119,16 @@ def load_model(model_path, device):
         nn.Dropout(0.5),
         nn.Linear(512, 3)  # Adjust the number of classes if necessary
     )
-    model.load_state_dict(torch.load(model_path))
+    try:
+        model.load_state_dict(torch.load(model_path, map_location=device))
+    except Exception as e:
+        print(f"Error loading model from {model_path}: {e}")
     model = model.to(device)
     return model
 
 # Initialize models
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 models = [load_model(path, device) for path in model_paths]
-
 
 # Function to predict with all models
 def predict_with_ensemble(image_path, models, device):
